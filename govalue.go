@@ -32,6 +32,9 @@ func writeCode(buf *bytes.Buffer, v any) error {
 	rt := reflect.TypeOf(v)
 	switch rt.Kind() {
 	case reflect.Invalid:
+		if _, err := buf.WriteString("<invalid>"); err != nil {
+			return err
+		}
 	case reflect.Bool:
 		if v, ok := v.(bool); ok && v {
 			if _, err := buf.WriteString("true"); err != nil {
