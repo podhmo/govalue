@@ -55,19 +55,12 @@ func writeCode(buf *bytes.Buffer, v any) error {
 			}
 		}
 		return nil
-	case reflect.Int8:
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), v); err != nil {
 			return err
 		}
 		return nil
-	case reflect.Int16:
-	case reflect.Int32:
-	case reflect.Int64:
-	case reflect.Uint:
-	case reflect.Uint8:
-	case reflect.Uint16:
-	case reflect.Uint32:
-	case reflect.Uint64:
 	case reflect.Uintptr:
 	case reflect.Float32:
 	case reflect.Float64:

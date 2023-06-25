@@ -22,6 +22,8 @@ func TestToCode(t *testing.T) {
 		{name: "bool-false", args: args{v: false}, want: `false`},
 		{name: "int", args: args{v: 10}, want: `10`},
 		{name: "int8", args: args{v: int8(10)}, want: `int8(10)`},
+		{name: "uint", args: args{v: uint(10)}, want: `uint(10)`},
+		{name: "uint16", args: args{v: uint16(10)}, want: `uint16(10)`},
 		{name: "string", args: args{v: "foo"}, want: `"foo"`},
 		{name: "string-with-quote", args: args{v: `"I'm lost"`}, want: `"\"I'm lost\""`},
 		// advanced
