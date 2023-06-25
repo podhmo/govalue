@@ -15,6 +15,10 @@ var pool = &sync.Pool{
 }
 
 func ToCode(v any) string {
+	if v == nil {
+		return "nil"
+	}
+
 	buf := pool.Get().(*bytes.Buffer)
 	buf.Reset()
 	defer pool.Put(buf)

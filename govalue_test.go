@@ -15,6 +15,7 @@ func TestToCode(t *testing.T) {
 		args args
 		want string
 	}{
+		{name: "nil", args: args{v: nil}, want: `nil`},
 		{name: "bool", args: args{v: true}, want: `true`},
 		{name: "bool-false", args: args{v: false}, want: `false`},
 		{name: "int", args: args{v: 10}, want: `10`},
