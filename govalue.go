@@ -24,26 +24,30 @@ func ToCode(v any) string {
 	return buf.String()
 }
 
-func writeCode(b *bytes.Buffer, v any) error {
+func writeCode(buf *bytes.Buffer, v any) error {
 	rv := reflect.ValueOf(v)
 	rt := reflect.TypeOf(v)
 	switch rt.Kind() {
 	case reflect.Invalid:
 	case reflect.Bool:
 		if v, ok := v.(bool); ok && v {
-			if _, err := b.WriteString("true"); err != nil {
+			if _, err := buf.WriteString("true"); err != nil {
 				return err
 			}
-		} else if _, err := b.WriteString("false"); err != nil {
+		} else if _, err := buf.WriteString("false"); err != nil {
 			return err
 		}
 		return nil
 	case reflect.Int:
-		if _, err := b.WriteString(strconv.Itoa(v.(int))); err != nil {
+		if _, err := buf.WriteString(strconv.Itoa(v.(int))); err != nil {
 			return err
 		}
 		return nil
 	case reflect.Int8:
+		if _, err := fmt.Fprintf(buf, "int8(%d)", v); err != nil {
+			return err
+		}
+		return nil
 	case reflect.Int16:
 	case reflect.Int32:
 	case reflect.Int64:
