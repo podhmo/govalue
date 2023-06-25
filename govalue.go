@@ -30,6 +30,14 @@ func writeCode(b *bytes.Buffer, v any) error {
 	switch rt.Kind() {
 	case reflect.Invalid:
 	case reflect.Bool:
+		if v, ok := v.(bool); ok && v {
+			if _, err := b.WriteString("true"); err != nil {
+				return err
+			}
+		} else if _, err := b.WriteString("false"); err != nil {
+			return err
+		}
+		return nil
 	case reflect.Int:
 		if _, err := b.WriteString(strconv.Itoa(v.(int))); err != nil {
 			return err
