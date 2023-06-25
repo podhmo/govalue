@@ -6,6 +6,8 @@ import (
 	"github.com/podhmo/govalue"
 )
 
+type MyInt int
+
 func TestToCode(t *testing.T) {
 	type args struct {
 		v any
@@ -22,6 +24,8 @@ func TestToCode(t *testing.T) {
 		{name: "int8", args: args{v: int8(10)}, want: `int8(10)`},
 		{name: "string", args: args{v: "foo"}, want: `"foo"`},
 		{name: "string-with-quote", args: args{v: `"I'm lost"`}, want: `"\"I'm lost\""`},
+		// advanced
+		{name: "new-type", args: args{v: MyInt(10)}, want: `MyInt(10)`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

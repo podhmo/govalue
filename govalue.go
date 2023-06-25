@@ -42,12 +42,18 @@ func writeCode(buf *bytes.Buffer, v any) error {
 		}
 		return nil
 	case reflect.Int:
-		if _, err := buf.WriteString(strconv.Itoa(v.(int))); err != nil {
-			return err
+		if rt.Name() == "int" {
+			if _, err := buf.WriteString(strconv.Itoa(v.(int))); err != nil {
+				return err
+			}
+		} else {
+			if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), v); err != nil {
+				return err
+			}
 		}
 		return nil
 	case reflect.Int8:
-		if _, err := fmt.Fprintf(buf, "int8(%d)", v); err != nil {
+		if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), v); err != nil {
 			return err
 		}
 		return nil
