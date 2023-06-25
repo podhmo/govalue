@@ -25,7 +25,6 @@ func ToCode(v any) string {
 }
 
 func writeCode(buf *bytes.Buffer, v any) error {
-	rv := reflect.ValueOf(v)
 	rt := reflect.TypeOf(v)
 	switch rt.Kind() {
 	case reflect.Invalid:
@@ -69,9 +68,14 @@ func writeCode(buf *bytes.Buffer, v any) error {
 	case reflect.Pointer:
 	case reflect.Slice:
 	case reflect.String:
+		if _, err := buf.WriteString(strconv.Quote(v.(string))); err != nil {
+			return err
+		}
+		return nil
 	case reflect.Struct:
 	case reflect.UnsafePointer:
 	default:
+		rv := reflect.ValueOf(v)
 		panic(fmt.Sprintf("unexpected kind: %s, %v", rt.Kind(), rv)) // we need panic instead of error
 	}
 	return fmt.Errorf("not implemented")
