@@ -26,6 +26,10 @@ func TestToCode(t *testing.T) {
 		{name: "uint16", args: args{v: uint16(10)}, want: `uint16(10)`},
 		{name: "string", args: args{v: "foo"}, want: `"foo"`},
 		{name: "string-with-quote", args: args{v: `"I'm lost"`}, want: `"\"I'm lost\""`},
+		// composite
+		{name: "[]string-0", args: args{v: []string{}}, want: `[]string{}`},
+		{name: "[]string-1", args: args{v: []string{"foo"}}, want: `[]string{"foo"}`},
+		{name: "[]string-2", args: args{v: []string{"foo", "bar"}}, want: `[]string{"foo", "bar"}`},
 		// advanced
 		{name: "new-type", args: args{v: MyInt(10)}, want: `MyInt(10)`},
 	}

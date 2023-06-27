@@ -71,6 +71,22 @@ func writeCode(buf *bytes.Buffer, rt reflect.Type, rv reflect.Value) error {
 	case reflect.Map:
 	case reflect.Pointer:
 	case reflect.Slice:
+		if err := writeType(buf, rt); err != nil {
+			return err
+		}
+		buf.WriteString("{")
+		st := rt.Elem()
+		for i, n := 0, rv.Len(); i < n; i++ {
+			sv := rv.Index(i)
+			if err := writeCode(buf, st, sv); err != nil {
+				return err
+			}
+			if i < n-1 {
+				buf.WriteString(", ")
+			}
+		}
+		buf.WriteString("}")
+		return nil
 	case reflect.String:
 		if rt == rstring {
 			if _, err := buf.WriteString(strconv.Quote(rv.String())); err != nil {
@@ -94,3 +110,14 @@ var (
 	rint    = reflect.TypeOf(int(0))
 	rstring = reflect.TypeOf("")
 )
+
+func writeType(buf *bytes.Buffer, rt reflect.Type) error {
+	switch rt.Kind() {
+	case reflect.Slice:
+		buf.WriteString("[]")
+		return writeType(buf, rt.Elem())
+	default:
+		buf.WriteString(rt.Name()) // now, supporting basic type only
+		return nil
+	}
+}
