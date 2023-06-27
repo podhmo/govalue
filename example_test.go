@@ -1,7 +1,11 @@
-# govalue
-write go value as go code
+package govalue_test
 
-```go
+import (
+	"fmt"
+
+	"github.com/podhmo/govalue"
+)
+
 func ExmapleToCode() {
 	xs := []int{1, 2, 3}
 	fmt.Printf("xs := %s\n", govalue.ToCode(xs))
@@ -12,4 +16,3 @@ func ExmapleToCode() {
 	// xs := []int{1, 2, 3}
 	// ys := []string{"foo", "bar", "boo"}
 }
-```
