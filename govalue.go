@@ -22,21 +22,20 @@ func ToCode(v any) string {
 	buf := pool.Get().(*bytes.Buffer)
 	buf.Reset()
 	defer pool.Put(buf)
-	if err := writeCode(buf, v); err != nil {
+	if err := writeCode(buf, reflect.TypeOf(v), reflect.ValueOf(v)); err != nil {
 		return fmt.Sprintf("<%s>", err.Error())
 	}
 	return buf.String()
 }
 
-func writeCode(buf *bytes.Buffer, v any) error {
-	rt := reflect.TypeOf(v)
+func writeCode(buf *bytes.Buffer, rt reflect.Type, rv reflect.Value) error {
 	switch rt.Kind() {
 	case reflect.Invalid:
 		if _, err := buf.WriteString("<invalid>"); err != nil {
 			return err
 		}
 	case reflect.Bool:
-		if v, ok := v.(bool); ok && v {
+		if rv.Bool() {
 			if _, err := buf.WriteString("true"); err != nil {
 				return err
 			}
@@ -44,20 +43,19 @@ func writeCode(buf *bytes.Buffer, v any) error {
 			return err
 		}
 		return nil
-	case reflect.Int:
-		if rt.Name() == "int" {
-			if _, err := buf.WriteString(strconv.Itoa(v.(int))); err != nil {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if rt == rint {
+			if _, err := fmt.Fprintf(buf, "%d", rv.Int()); err != nil {
 				return err
 			}
 		} else {
-			if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), v); err != nil {
+			if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), rv.Int()); err != nil {
 				return err
 			}
 		}
 		return nil
-	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), v); err != nil {
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		if _, err := fmt.Fprintf(buf, "%s(%d)", rt.Name(), rv.Uint()); err != nil {
 			return err
 		}
 		return nil
@@ -74,15 +72,25 @@ func writeCode(buf *bytes.Buffer, v any) error {
 	case reflect.Pointer:
 	case reflect.Slice:
 	case reflect.String:
-		if _, err := buf.WriteString(strconv.Quote(v.(string))); err != nil {
-			return err
+		if rt == rstring {
+			if _, err := buf.WriteString(strconv.Quote(rv.String())); err != nil {
+				return err
+			}
+		} else {
+			if _, err := fmt.Fprintf(buf, "%s(%q)", rt.Name(), rv.String()); err != nil {
+				return err
+			}
 		}
 		return nil
 	case reflect.Struct:
 	case reflect.UnsafePointer:
 	default:
-		rv := reflect.ValueOf(v)
 		panic(fmt.Sprintf("unexpected kind: %s, %v", rt.Kind(), rv)) // we need panic instead of error
 	}
 	return fmt.Errorf("not implemented")
 }
+
+var (
+	rint    = reflect.TypeOf(int(0))
+	rstring = reflect.TypeOf("")
+)
