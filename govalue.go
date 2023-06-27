@@ -60,8 +60,17 @@ func writeCode(buf *bytes.Buffer, rt reflect.Type, rv reflect.Value) error {
 		}
 		return nil
 	case reflect.Uintptr:
-	case reflect.Float32:
-	case reflect.Float64:
+	case reflect.Float32, reflect.Float64:
+		if rt == rfloat64 {
+			if _, err := fmt.Fprintf(buf, "%f", rv.Float()); err != nil {
+				return err
+			}
+		} else {
+			if _, err := fmt.Fprintf(buf, "%s(%f)", rt.Name(), rv.Float()); err != nil {
+				return err
+			}
+		}
+		return nil
 	case reflect.Complex64:
 	case reflect.Complex128:
 	case reflect.Array:
@@ -107,8 +116,9 @@ func writeCode(buf *bytes.Buffer, rt reflect.Type, rv reflect.Value) error {
 }
 
 var (
-	rint    = reflect.TypeOf(int(0))
-	rstring = reflect.TypeOf("")
+	rint     = reflect.TypeOf(int(0))
+	rfloat64 = reflect.TypeOf(float64(0.0))
+	rstring  = reflect.TypeOf("")
 )
 
 func writeType(buf *bytes.Buffer, rt reflect.Type) error {
