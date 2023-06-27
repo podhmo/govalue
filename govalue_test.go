@@ -32,8 +32,10 @@ func TestToCode(t *testing.T) {
 		{name: "[]string-0", args: args{v: []string{}}, want: `[]string{}`},
 		{name: "[]string-1", args: args{v: []string{"foo"}}, want: `[]string{"foo"}`},
 		{name: "[]string-2", args: args{v: []string{"foo", "bar"}}, want: `[]string{"foo", "bar"}`},
+		{name: "[]int3", args: args{v: []int{1, 2, 3}}, want: `[]int{1, 2, 3}`},
 		// advanced
 		{name: "new-type", args: args{v: MyInt(10)}, want: `MyInt(10)`},
+		{name: "new-type[]", args: args{v: []MyInt{1, 2, 3}}, want: `[]MyInt{1, 2, 3}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
